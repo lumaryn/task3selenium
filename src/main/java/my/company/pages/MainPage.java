@@ -4,34 +4,52 @@ package my.company.pages;
 
 import my.company.steps.BaseSteps;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 
+public class MainPage extends BasePageObject {
+    private WebDriver driver;
 
-/**
- * Created by Maria on 29.04.2017.
- */
-public class MainPage {
+    @FindBy(xpath = "//*[@id=\"main\"]/div[5]/div/div/div")
+    WebElement closeCoockie;
 
+    @FindBy(xpath = "//*[@id=\"main\"]/div[5]/div/div/div/div/div/div[3]")
+    WebElement closeBtn;
 
-    @FindBy(xpath = "//ol[contains(@class,'rgs-menu pull-left')]")
-    WebElement menuItems;
+    @FindBy(xpath = "//*[@id=\"main\"]/div[4]/div/div/div/div[2]/nav/div[2]/div/div[5]/div[3]/a")
+    WebElement Insurance;
 
-    @FindBy(xpath = "//div[contains(@class,'grid rgs-main-menu')]")
-    WebElement menuInsurance;
-
-    public MainPage(){
-        PageFactory.initElements(BaseSteps.getDriver(), this);
+    public MainPage(WebDriver driver){
+        PageFactory.initElements(driver, this);
+        this.driver = driver;
     }
 
-    public void selectMenuItem(String itemName){
-        menuItems.findElement(By.xpath(".//li[contains(@class,'current')]/*[contains(text(),'"+itemName+"')]")).click();
+
+    public void closeCoockies(){
+
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, 20);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id=\"main\"]/div[5]/div/div/div")));
+            waitToBeClickable(driver, closeBtn);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Ошибка: "+e);
+        }
     }
 
-    public void selectInsuranceItem(String itemName){
-        menuInsurance.findElement(By.xpath(".//li[contains(@class,'line3-link')]//a[contains(text(),'"+itemName+"')]")).click();
+    public void selectInsuranceItem(){
+        WebDriverWait wait = new WebDriverWait(driver, 20);
+        try {
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id=\"main\"]/div[4]/div/div/div/div[2]/nav/div[2]/div/div[5]/div[3]/a")));
+            waitToBeClickable(driver,Insurance);
+        }catch (Exception e){System.out.println("Error: "+e);}
+
     }
 }
 

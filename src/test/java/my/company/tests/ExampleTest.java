@@ -1,47 +1,50 @@
 package my.company.tests;
 
-import my.company.steps.BaseSteps;
-import my.company.steps.DMSSteps;
-import my.company.steps.MainPageSteps;
-import my.company.steps.SendAppSteps;
+import my.company.pages.BasePageObject;
+import my.company.steps.*;
 import org.junit.Test;
 import ru.yandex.qatools.allure.annotations.Title;
+import java.util.LinkedHashMap;
 
-import java.util.HashMap;
-
-/**
- * Created by 777 on 07.05.2017.
- */
 public class ExampleTest extends BaseSteps {
 
     MainPageSteps mainPageSteps = new MainPageSteps();
-    DMSSteps dmsSteps = new DMSSteps();
-    SendAppSteps sendAppSteps = new SendAppSteps();
+    InsurancePageSteps insurancePageSteps = new InsurancePageSteps();
+    InsuranceOfTravelersPageSteps insuranceOfTravelersPageSteps = new InsuranceOfTravelersPageSteps();
+    SendDataPageSteps sendDataPageSteps = new SendDataPageSteps();
+    LinkedHashMap<String, String> testData = new LinkedHashMap<>();
 
-    HashMap<String, String> testData = new HashMap<>();
-
-
-    @Title("Заявка на ДМС")
+    @Title("Сбербанк Страхование")
     @Test
-    public void Test(){
-        testData.put("Имя","Иван");
-        testData.put("Фамилия","Иванов");
-        testData.put("Отчество","Иванович");
-        testData.put("Регион","Москва");
-        testData.put("Телефон","9191111112");
-        testData.put("Эл. почта","teststststs");
-        testData.put("Комментарии","Autotest");
 
-        mainPageSteps.selectMenuItem("Страхование");
-        mainPageSteps.selectMenuInsurance("ДМС");
-        dmsSteps.checkPageTitle("Добровольное медицинское страхование");
-        dmsSteps.goToSendAppPage();
-        sendAppSteps.checkPageTitle("Заявка на добровольное медицинское страхование");
+    public void Test() {
+        getDriver().get(baseUrl + "/");
+        mainPageSteps.closeCookies();
+        mainPageSteps.selectMenuInsurance();
+        insurancePageSteps.getOnline();
+        insurancePageSteps.checkTitle();
+        insuranceOfTravelersPageSteps.goToData();
+        BasePageObject.openNewWindow(getDriver());
+        sendDataPageSteps.getSumm();
+        sendDataPageSteps.Issue();
 
-        sendAppSteps.fillFields(testData);
+        testData.put("Фамилия","Ivanov");
+        testData.put( "Имя","Ivan");
+        testData.put("Дата рождения", "01.01.1990");
+        testData.put("Фамилия страхователя", "Петрова");
+        testData.put("Имя страхователя", "Наталья");
+        testData.put("Отчество страхователя", "Петровна");
+        testData.put("Дата рождения страхователя", "01.01.2001");
+        testData.put("Пол", "female");
+        testData.put("Серия паспорта", "1234");
+        testData.put("Номер паспорта", "123456");
+        testData.put("Дата выдачи", "01.01.2000");
+        testData.put("Место выдачи", "ОВД Красногорского района");
 
-        testData.put("Телефон","+7 (919) 111-11-11");
-        sendAppSteps.checkFillFields(testData);
-        sendAppSteps.checkErrorMessageField("Эл. почта", "Введите корректный email");
+        sendDataPageSteps.fillFields(testData);
+        testData = BasePageObject.clearElement("Пол", testData);
+        sendDataPageSteps.checkFillFields(testData);
+        sendDataPageSteps.Continue();
+        sendDataPageSteps.errorMessage("Заполнены не все обязательные поля");
     }
 }
